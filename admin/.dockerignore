@@ -1,0 +1,29 @@
+# Node modules (install inside container!)
+node_modules
+npm-debug.log
+yarn-error.log
+*.log
+
+# Build outputs (if any)
+dist
+build
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git & IDE files
+.git
+.gitignore
+.vscode
+.idea
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS/system files
+.DS_Store
+Thumbs.db
