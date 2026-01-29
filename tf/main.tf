@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-provider "docker" {}
+
 
 # Docker network
 resource "docker_network" "ecommerce_network" {
