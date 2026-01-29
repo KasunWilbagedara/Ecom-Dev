@@ -7,6 +7,7 @@ pipeline {
         BACKEND_IMAGE = 'ecom_devops-backend'
         FRONTEND_IMAGE = 'ecom_devops-frontend'
         ADMIN_IMAGE = 'ecom_devops-admin'
+        TERRAFORM_DIR = 'tf'  
     }
 
     stages {
@@ -31,6 +32,16 @@ pipeline {
                     sh 'docker push $DOCKERHUB_USER/$BACKEND_IMAGE'
                     sh 'docker push $DOCKERHUB_USER/$FRONTEND_IMAGE'
                     sh 'docker push $DOCKERHUB_USER/$ADMIN_IMAGE'
+                }
+            }
+        }
+
+        stage('Deploy with Terraform') {
+            steps {
+                dir("$TERRAFORM_DIR") {
+                    sh 'terraform init'
+                    sh 'terraform plan'
+                    sh 'terraform apply -auto-approve'
                 }
             }
         }

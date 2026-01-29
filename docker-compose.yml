@@ -10,19 +10,20 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: ecommerce_db
     ports:
-      - "27017:27017"  # Host:Container (matches backend MONGO_URL)
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     networks:
       - ecommerce-network
 
   backend:
+    image: kasunwilbagedara/ecommerce-backend:latest
     build: ./backend
     container_name: ecommerce-backend
     ports:
       - "5000:5000"
     environment:
-      MONGO_URL: ${MONGO_URL}  # Loaded from .env
+      MONGO_URL: ${MONGO_URL}
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
@@ -32,6 +33,7 @@ services:
       - ecommerce-network
 
   frontend:
+    image: kasunwilbagedara/ecommerce-frontend:latest
     build: ./frontend
     container_name: ecommerce-frontend
     ports:
@@ -42,6 +44,7 @@ services:
       - ecommerce-network
 
   admin:
+    image: kasunwilbagedara/ecommerce-admin:latest
     build: ./admin
     container_name: ecommerce-admin
     ports:
