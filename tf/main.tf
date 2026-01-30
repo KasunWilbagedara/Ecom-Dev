@@ -1,14 +1,3 @@
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 2.16"
-    }
-  }
-}
-
-
-
 # Docker network
 resource "docker_network" "ecommerce_network" {
   name   = "ecommerce-network"
@@ -17,8 +6,8 @@ resource "docker_network" "ecommerce_network" {
 
 # MongoDB container
 resource "docker_container" "mongo" {
-  image   = "mongo:7.0"
   name    = "ecommerce-mongo"
+  image   = "mongo:7.0"
   restart = "always"
 
   networks_advanced {
@@ -37,20 +26,24 @@ resource "docker_container" "mongo" {
   }
 
   volumes {
-    host_path      = "${path.module}/mongo-data"
+    host_path      = var.mongo_data_path
     container_path = "/data/db"
   }
 }
 
-# Backend container
-resource "docker_container" "backend" {
-  image = "kasunwilbagedara/ecom_devops-backend:latest"
+# Backend image and container
+resource "docker_image" "backend" {
+  name = "kasunwilbagedara/ecom_devops-backend:latest"
 
   build {
-    context = "../backend"
+    context    = "../backend"
+    dockerfile = "Dockerfile"
   }
+}
 
-  name = "ecommerce-backend"
+resource "docker_container" "backend" {
+  name  = "ecommerce-backend"
+  image = docker_image.backend.latest
 
   ports {
     internal = 5000
@@ -71,15 +64,19 @@ resource "docker_container" "backend" {
   ]
 }
 
-# Frontend container
-resource "docker_container" "frontend" {
-  image = "kasunwilbagedara/ecom_devops-frontend:latest"
+# Frontend image and container
+resource "docker_image" "frontend" {
+  name = "kasunwilbagedara/ecom_devops-frontend:latest"
 
   build {
-    context = "../frontend"
+    context    = "../frontend"
+    dockerfile = "Dockerfile"
   }
+}
 
-  name = "ecommerce-frontend"
+resource "docker_container" "frontend" {
+  name  = "ecommerce-frontend"
+  image = docker_image.frontend.latest
 
   ports {
     internal = 5173
@@ -93,15 +90,19 @@ resource "docker_container" "frontend" {
   }
 }
 
-# Admin container
-resource "docker_container" "admin" {
-  image = "kasunwilbagedara/ecom_devops-admin:latest"
+# Admin image and container
+resource "docker_image" "admin" {
+  name = "kasunwilbagedara/ecom_devops-admin:latest"
 
   build {
-    context = "../admin"
+    context    = "../admin"
+    dockerfile = "Dockerfile"
   }
+}
 
-  name = "ecommerce-admin"
+resource "docker_container" "admin" {
+  name  = "ecommerce-admin"
+  image = docker_image.admin.latest
 
   ports {
     internal = 5174

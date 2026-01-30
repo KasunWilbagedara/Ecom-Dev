@@ -1,19 +1,21 @@
+variable "mongo_data_path" {
+  description = "MongoDB data directory on host"
+  type        = string
+  default     = "/home/kasun/mongo-data"
+}
+
 variable "mongo_url" {
-  type    = string
-  default = "mongodb://root:example@localhost:27017/ecommerce_db"
+  default = "mongodb://root:example@ecommerce-mongo:27017/ecommerce_db"
 }
 
 variable "jwt_secret" {
-  type    = string
-  default = "supersecret"
+  default = "supersecretjwt"
 }
 
 variable "admin_email" {
-  type    = string
   default = "admin@example.com"
 }
 
 variable "admin_password" {
-  type    = string
-  default = "password123"
+  default = "admin123"
 }
