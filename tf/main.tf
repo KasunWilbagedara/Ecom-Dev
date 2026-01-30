@@ -1,10 +1,31 @@
 # --------------------------
+# Cleanup existing Docker resources
+# --------------------------
+resource "null_resource" "docker_cleanup" {
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Cleaning up old Docker resources..."
+
+      # Stop and remove existing containers
+      docker rm -f ecommerce-mongo ecommerce-backend ecommerce-frontend ecommerce-admin || true
+
+      # Remove existing images
+      docker rmi -f kasunwilbagedara/ecom_devops-backend:latest kasunwilbagedara/ecom_devops-frontend:latest kasunwilbagedara/ecom_devops-admin:latest || true
+
+      echo "Cleanup complete."
+    EOT
+  }
+}
+
+# --------------------------
 # MongoDB Container
 # --------------------------
 resource "docker_container" "mongo" {
   name    = "ecommerce-mongo"
   image   = "mongo:7.0"
   restart = "always"
+
+  depends_on = [null_resource.docker_cleanup]
 
   env = [
     "MONGO_INITDB_ROOT_USERNAME=root",
@@ -33,6 +54,8 @@ resource "docker_image" "backend" {
     context    = "../backend"
     dockerfile = "Dockerfile"
   }
+
+  depends_on = [null_resource.docker_cleanup]
 }
 
 resource "docker_container" "backend" {
@@ -64,6 +87,8 @@ resource "docker_image" "frontend" {
     context    = "../frontend"
     dockerfile = "Dockerfile"
   }
+
+  depends_on = [null_resource.docker_cleanup]
 }
 
 resource "docker_container" "frontend" {
@@ -88,6 +113,8 @@ resource "docker_image" "admin" {
     context    = "../admin"
     dockerfile = "Dockerfile"
   }
+
+  depends_on = [null_resource.docker_cleanup]
 }
 
 resource "docker_container" "admin" {
