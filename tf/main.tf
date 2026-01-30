@@ -1,24 +1,10 @@
 # --------------------------
-# Docker Network
-# --------------------------
-resource "docker_network" "ecommerce_network" {
-  name          = "ecommerce-network"
-  driver        = "bridge"
-  check_duplicate = true
-  
-}
-
-# --------------------------
 # MongoDB Container
 # --------------------------
 resource "docker_container" "mongo" {
   name    = "ecommerce-mongo"
   image   = "mongo:7.0"
   restart = "always"
-
-  networks_advanced {
-    name = docker_network.ecommerce_network.name
-  }
 
   env = [
     "MONGO_INITDB_ROOT_USERNAME=root",
@@ -60,10 +46,6 @@ resource "docker_container" "backend" {
     external = 5000
   }
 
-  networks_advanced {
-    name = docker_network.ecommerce_network.name
-  }
-
   env = [
     "MONGO_URL=${var.mongo_url}",
     "JWT_SECRET=${var.jwt_secret}",
@@ -94,10 +76,6 @@ resource "docker_container" "frontend" {
     internal = 5173
     external = 80
   }
-
-  networks_advanced {
-    name = docker_network.ecommerce_network.name
-  }
 }
 
 # --------------------------
@@ -121,9 +99,5 @@ resource "docker_container" "admin" {
   ports {
     internal = 5174
     external = 8090
-  }
-
-  networks_advanced {
-    name = docker_network.ecommerce_network.name
   }
 }
