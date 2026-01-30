@@ -4,7 +4,7 @@
 resource "docker_network" "ecommerce_network" {
   name          = "ecommerce-network"
   driver        = "bridge"
-  force_destroy = true   # removes existing network if it exists
+  
 }
 
 # --------------------------
