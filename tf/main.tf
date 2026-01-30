@@ -4,6 +4,7 @@
 resource "docker_network" "ecommerce_network" {
   name          = "ecommerce-network"
   driver        = "bridge"
+  check_duplicate = true
   
 }
 
